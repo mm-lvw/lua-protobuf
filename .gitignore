@@ -1,3 +1,6 @@
+*debug/
+*release/
+.idea/
 *.dll
 *.dll.*
 *.so
