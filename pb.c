@@ -499,7 +499,7 @@ static void lpb_readtype(lua_State *L, lpb_State *LS, int type, lpb_SliceEx *s) 
 # include <io.h>
 # include <fcntl.h>
 #else
-# define setmode(a,b)  ((void)0)
+# define _setmode(a,b)  ((void)0)
 #endif
 
 static int io_read(lua_State *L) {
@@ -532,24 +532,24 @@ static int Lio_read(lua_State *L) {
     FILE *fp = stdin;
     int ret;
     if (fname == NULL)
-        (void)setmode(fileno(stdin), O_BINARY);
+        (void)_setmode(_fileno(stdin), O_BINARY);
     else if ((fp = fopen(fname, "rb")) == NULL)
         return luaL_fileresult(L, 0, fname);
     lua_pushcfunction(L, io_read);
     lua_pushlightuserdata(L, fp);
     ret = lua_pcall(L, 1, 1, 0);
     if (fp != stdin) fclose(fp);
-    else (void)setmode(fileno(stdin), O_TEXT);
+    else (void)_setmode(_fileno(stdin), O_TEXT);
     if (ret != LUA_OK) { lua_pushnil(L); lua_insert(L, -2); return 2; }
     return 1;
 }
 
 static int Lio_write(lua_State *L) {
     int res;
-    (void)setmode(fileno(stdout), O_BINARY);
+    (void)_setmode(_fileno(stdout), O_BINARY);
     res = io_write(L, stdout, 1);
     fflush(stdout);
-    (void)setmode(fileno(stdout), O_TEXT);
+    (void)_setmode(_fileno(stdout), O_TEXT);
     return res;
 }
 
